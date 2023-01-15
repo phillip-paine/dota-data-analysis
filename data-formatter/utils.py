@@ -10,7 +10,7 @@ def get_hero_dict():
     return hero_dictionary
 
 
-def create_public_matches_datafame(json_records: dict):
+def create_public_matches_datafame(json_records: dict) -> pd.DataFrame:
     # load hero dictionary:
     hero_dict = get_hero_dict()
     # write json to dataframe:
@@ -30,12 +30,11 @@ def create_public_matches_datafame(json_records: dict):
     for i in range(1, 6):
         df['dire_hero_' + str(i)] = df['dire' + str(i)].apply(lambda x: hero_dict[x])
 
-    df.to_csv()
-    return None
+    return df
 
 
 if __name__ == '__main__':
     # edit the working dir in the run/debug config page
     json_file = open('data-scraper/data/public_match_data_20230111_230019.json')
     records_json = json.load(json_file)
-    create_public_matches_datafame(records_json)
+    df = create_public_matches_datafame(records_json)
