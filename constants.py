@@ -9,7 +9,7 @@ def create_update_hero_dict():
     hero_json = r.json()
     for line in hero_json:
         hero_dict[line['id']] = line['localized_name']
-    f = open('data-scraper/data/hero_dict.pkl', 'wb')
+    f = open('data_scraper/data/hero_dict.pkl', 'wb')
     pickle.dump(hero_dict, f)
     f.close()
 

@@ -8,7 +8,7 @@ from utils import create_public_matches_datafame
 
 def run_main_formatter(save_filepath: str):
     # run the formatting functions:
-    pathdir = 'data-scraper/data'
+    pathdir = 'data_scraper/data'
     files = [f for f in listdir(pathdir) if isfile(join(pathdir, f))]
     files = [f for f in files if f.startswith('public_match_data')]
     df_store = pd.DataFrame()
@@ -24,5 +24,5 @@ def run_main_formatter(save_filepath: str):
 
 if __name__ == '__main__':
     # create dataframes from scraped data:
-    PATH_TO_SAVE = 'data-storage/public_match_data_formatted.csv'
+    PATH_TO_SAVE = 'data_storage/public_match_data_formatted.csv'
     run_main_formatter(PATH_TO_SAVE)

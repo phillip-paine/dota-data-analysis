@@ -4,7 +4,7 @@ import json
 
 
 def get_hero_dict():
-    file = open('data-scraper/data/hero_dict.pkl', 'rb')
+    file = open('data_scraper/data/hero_dict.pkl', 'rb')
     hero_dictionary = pickle.load(file)
     file.close()
     return hero_dictionary
@@ -35,6 +35,6 @@ def create_public_matches_datafame(json_records: dict) -> pd.DataFrame:
 
 if __name__ == '__main__':
     # edit the working dir in the run/debug config page
-    json_file = open('data-scraper/data/public_match_data_20230111_230019.json')
+    json_file = open('data_scraper/data/public_match_data_20230111_230019.json')
     records_json = json.load(json_file)
     df = create_public_matches_datafame(records_json)

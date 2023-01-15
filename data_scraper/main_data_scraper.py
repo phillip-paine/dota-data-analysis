@@ -16,4 +16,5 @@ def run_main(publicmatches: bool):
 
 if __name__ == '__main__':
     # scrape public match data from api and write to json:
-    run_main(publicmatches=True)
+    for i in range(50):
+        run_main(publicmatches=True)
