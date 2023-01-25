@@ -3,7 +3,7 @@ import numpy as np
 from abc import ABC, abstractmethod  # abstract class
 
 # abstract class for models
-class models(ABC):
+class Models(ABC):
     # initialise values
     def __init__(self):
     self. =
