@@ -23,6 +23,9 @@ def run_main_formatter(save_filepath: str):
     return None
 
 
+
+
+
 if __name__ == '__main__':
     # create dataframes from scraped data:
     PATH_TO_SAVE = 'data_storage/public_match_data_formatted.parquet'
