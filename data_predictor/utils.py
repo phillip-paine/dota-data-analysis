@@ -26,19 +26,17 @@ def create_model_features():
     return df
 
 
-def calculate_attribute_count(dat, attr: str, map_hero):
-    dat_list = [x[0] for x in dat]
-    val = sum([map_hero.filter(pl.col('name') == hero_).select(attr) for hero_ in dat_list])
-    return val
-
-
 def count_attribute_teams(attribute: str, df: pl.DataFrame, hero_dict: pl.DataFrame):
     teams = ['radiant', 'dire']
     for t_ in teams:
         # need an apply function with a look-up to the hero_dictionary
+        # df = df.with_columns(pl.lit(0).alias(f'{t_}_{attribute}_count'))
         df = df.with_columns([
-            pl.struct([f'{t_}_hero_{i}' for i in range(1, 6)]).
-            apply(lambda row: calculate_attribute_count(row, attribute, hero_dict)).
+            pl.struct(pl.col(rf'^{t_}_hero_.*$')).
+            # apply(lambda x: calculate_attribute_count(x, attribute, hero_dict)).
+            apply(lambda row:
+                    sum([int(hero_dict.filter(pl.col('name') == hero_).select(attribute)[0, 0])
+                     for hero_ in list(row.values())])).
             alias(f'{t_}_{attribute}_count')
         ])
 
