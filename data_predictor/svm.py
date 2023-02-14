@@ -2,11 +2,13 @@ import polars as pl
 import numpy as np
 from sklearn.svm import SVC  # support vector machine classifier
 from data_predictor.models import Model
+from data_predictor.utils import model_evaluation
 
 
 # implement support vector machine model through the abstract model class
 class SupportVectorMachine(Model):
     display_name = "SupportVectorMachine"
+
     def __init__(self, svc, df_train, model_params):  # can implement here to overwrite the abstract class definition
         super().__init__(df_train, model_params)  # super creates a temp object of parent class Models -
         # for example if there were methods there we would not need to redefine them here, or
@@ -26,9 +28,8 @@ class SupportVectorMachine(Model):
         complete_df['yhat'] = self.svc.predict(complete_df.drop('y', inplace=True))  # this is not polars formatting
         return complete_df
 
-    def validation_metrics(self, predicted_df: pl.DataFrame):
-        # TODO : compute validation metric - baseline? random choice?
-
+    def validation(self, predicted_df: pl.DataFrame):
+        model_evaluation(predicted_df['y'], predicted_df['yhat'])
         return None
 
 

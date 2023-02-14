@@ -10,11 +10,15 @@ def run_models(models: List[str], model_arguments: List[Dict[Any, Any]]) -> None
         model_object = Model()
         # set radiant_win to y:
 
+        # train-test split for validation:
+
         # fit model:
+
+        # predict future output for test portion:
 
         # validate fitted model:
 
-        # predict future output:
+        # rebuild trained model on all data:
 
         # save to data store:
 
