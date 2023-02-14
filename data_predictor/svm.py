@@ -26,12 +26,9 @@ class SupportVectorMachine(Model):
         complete_df['yhat'] = self.svc.predict(complete_df.drop('y', inplace=True))  # this is not polars formatting
         return complete_df
 
-    def validation(self, fitted_df, validate_df):
-        # TODO : set seed
-        # TODO : train-test split
-        # TODO : call fit method
-        # TODO : run predict method
+    def validation_metrics(self, predicted_df: pl.DataFrame):
         # TODO : compute validation metric - baseline? random choice?
+
         return None
 
 

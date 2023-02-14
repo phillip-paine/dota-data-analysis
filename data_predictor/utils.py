@@ -42,6 +42,19 @@ def count_attribute_teams(attribute: str, df: pl.DataFrame, hero_dict: pl.DataFr
 
     return df
 
+def model_evaluation():
+
+    return None
+
+def evaluation_metrics():
+
+    return None
+
+def evaluation_plots():
+
+    return None
+
 
 if __name__ == '__main__':
-    create_model_features()
+    # create_model_features()
+    hold = 1
