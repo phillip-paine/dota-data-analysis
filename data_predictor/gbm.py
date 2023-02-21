@@ -3,6 +3,7 @@ import polars as pl
 import lightgbm as lgb
 from data_predictor.utils import model_evaluation
 from data_predictor.models import Model
+import pickle
 
 
 class LightGBM(Model):
@@ -29,3 +30,9 @@ class LightGBM(Model):
     def validation(self, predicted_df: pl.DataFrame):
         model_evaluation(predicted_df['y'], predicted_df['yhat'])
         return None
+
+    def fetch_model(self):
+        return self.lgbm
+
+    def save_model(self, file):
+        pickle.dump(self.lgbm, file)

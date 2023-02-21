@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.svm import SVC  # support vector machine classifier
 from data_predictor.models import Model
 from data_predictor.utils import model_evaluation
+import pickle
 
 
 # implement support vector machine model through the abstract model class
@@ -24,6 +25,8 @@ class SupportVectorMachine(Model):
         return SupportVectorMachine(svc=svc, df_train=train_data, model_params=model_params)
 
     def predict(self, fitted_df: pl.DataFrame, predict_df: pl.DataFrame):
+        fitted_df.with_columns('data_stage' == 'history')
+        predict_df.with_columns('data_stage' == 'future')
         complete_df = pl.concat([fitted_df, predict_df])  # works in polars?
         complete_df['yhat'] = self.svc.predict(complete_df.drop('y', inplace=True))  # this is not polars formatting
         return complete_df
@@ -31,5 +34,11 @@ class SupportVectorMachine(Model):
     def validation(self, predicted_df: pl.DataFrame):
         model_evaluation(predicted_df['y'], predicted_df['yhat'])
         return None
+
+    def fetch_model(self):
+        return self.svc
+
+    def save_model(self, file):
+        pickle.dump(self.svc, file)
 
 

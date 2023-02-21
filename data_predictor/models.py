@@ -34,6 +34,13 @@ class Model(metaclass=Method):
     def validation(self, validation_df: pl.DataFrame):
         pass
 
+    @abstractmethod
+    def fetch_model(self):
+        pass
+
+    def save_model(self, file):
+        pass
+
     @property
     def method(self) -> Method:
         return cast(Method, type(self))

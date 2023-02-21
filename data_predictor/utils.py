@@ -1,7 +1,4 @@
-import pandas as pd
 import polars as pl
-import numpy as np
-import json
 
 
 def create_model_features():
@@ -42,17 +39,38 @@ def count_attribute_teams(attribute: str, df: pl.DataFrame, hero_dict: pl.DataFr
 
     return df
 
+
 def model_evaluation():
 
     return None
+
 
 def evaluation_metrics():
 
     return None
 
+
 def evaluation_plots():
 
     return None
+
+
+def read_data(file_name: str):
+    extension = file_name.split('.')[-1]
+    # python >=3.10 has match-case (like switch statement)
+    try:
+        assert extension in ['parquet', 'csv', 'json']  # check if filetype is one of this list with assert
+    except Exception as e:
+        print(e, type(e))
+        print("Not a recognised filetype - should be one of parquet, csv and json")
+
+    else:  # if try passes (and no exception encountered)
+        if extension == 'parquet':
+            return pl.read_parquet(file_name)
+        elif extension == 'csv':
+            return pl.read_csv(file_name)
+        elif extension == 'json':
+            return pl.read_json(file_name)
 
 
 if __name__ == '__main__':
