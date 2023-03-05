@@ -67,11 +67,17 @@ def compare_model_evaluations(y: pl.Series, yhat_dict: Dict[str, Any]):
 
 
 def model_evaluation(y: pl.Series, yhat: pl.Series):
+    eval_metrics_dict = {}
     # calculate the YPC (or MCC):
     ypc = metrics.matthews_corrcoef(y, yhat)  # yule's phi coefficient (also called Matthews correlation coef.)
+    eval_metrics_dict['YulePhiCoef'] = ypc
     # area under ROC curve:
     fpr, tpr, _ = metrics.roc_curve(y, yhat, pos_label=2)
     roc_plot = plot_roc_figure(fpr, tpr)
+    eval_metrics_dict['roc_plot'] = roc_plot
+    # accuracy score - metric is okay here because relatively equal class counts
+    acc_score = metrics.accuracy_score(y, yhat)
+    eval_metrics_dict['accuracy_score'] = acc_score
     return ypc, roc_plot
 
 
