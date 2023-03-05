@@ -1,6 +1,4 @@
 """constants needed in the project"""
-from data_predictor.svm import SupportVectorMachine
-from data_predictor.gbm import LightGBM
 
 MODELS_IN_USE = ['svm', 'gbm']
 

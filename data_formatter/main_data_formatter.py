@@ -20,8 +20,6 @@ def run_main_formatter(save_filepath: str):
         df_temp = create_public_matches_datafame(match_data_file)
         df_store = pd.concat([df_store, df_temp])
     df_store.to_parquet(save_filepath)
-
-
     return None
 
 

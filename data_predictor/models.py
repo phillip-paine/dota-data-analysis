@@ -21,9 +21,7 @@ class Method(ABCMeta, metaclass=ABCMeta):
 
 class Model(metaclass=Method):
     # initialise values
-    def __init__(self, df_train, df_fit,  model_params):
-        self.df_train = df_train
-        self.df_fit = df_fit
+    def __init__(self, model_params):
         self.model_params = model_params
 
     @abstractmethod

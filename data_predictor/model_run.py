@@ -1,10 +1,8 @@
 import polars as pl
-import numpy as np
-from data_predictor.models import Model
 from typing import List, Dict, Any
 from data_predictor.utils import read_data
 from data_predictor.svm import SupportVectorMachine
-from data_predictor.gbm import LightGBM
+from data_predictor.gbm import GBM
 from run_constants.run_constants import MODELS_IN_USE, RUN_ARGUMENTS
 from data_predictor.dataframe_holder import DataFrameHolder
 from sklearn.svm import SVC
@@ -25,7 +23,7 @@ def run_models(models: List[str], model_arguments: Dict[str, Dict[Any, Any]], ru
         if model == "svm":
             model_inst = SupportVectorMachine(SVC(), data_holder, model_arguments['svm'])
         elif model == "gbm":
-            model_inst = LightGBM(LGBMClassifier(), data_holder, model_arguments['gbm'])
+            model_inst = GBM(LGBMClassifier(), data_holder, model_arguments['gbm'])
 
         if run_arguments['validation_stage']:
             # train-test split for validation:
@@ -39,6 +37,11 @@ def run_models(models: List[str], model_arguments: Dict[str, Dict[Any, Any]], ru
         # save model to data store:
         model_inst.save_model(f"radiant_winrate_fitted_{model}")
 
+    return None
+
+
+def main_model_run():
+    """function to run the models and return fitted models + train-test validation results for display"""
     return None
 
 
