@@ -34,19 +34,22 @@ class GBM(Model):
         complete_df = complete_df.with_columns(pl.Series(name="yhat_gbm_probs", values=probability_prediction))  # pred class probabilities
         return complete_df
 
-    def validation(self, predicted_df: pl.DataFrame):
+    def validation(self, predicted_df: pl.DataFrame, roc_plot: bool = False):
         validation_data = predicted_df.filter(pl.col("history") == 0)  # only want unseen data here
-        model_evaluation(predicted_df['radiant_win_flag'], predicted_df['yhat_gbm'])
-        return None
+        model_eval_dict = model_evaluation(validation_data['radiant_win_flag'], validation_data['yhat_gbm'],
+                                           self.display_name, roc_plot)
+        return model_eval_dict
 
     def fetch_model(self):
         return self.gbm
 
     def save_model(self, file):
-        pickle.dump(self.gbm, file)
+        with open(file, 'wb') as pickle_file:
+            pickle.dump(self.gbm, pickle_file)
 
     def load_model(self, file):
-        self.gbm = pickle.load(file)
+        with open(file, 'rb') as pickle_file:
+            self.gbm = pickle.load(pickle_file)
 
 
 if __name__ == '__main__':
@@ -64,8 +67,9 @@ if __name__ == '__main__':
     model_columns = train_data.drop(["radiant_win", "radiant_win_flag"]).columns
     df_feat_summary = pl.DataFrame({"names": model_columns, "imp": gbm_model.gbm.feature_importances_}).sort("imp", reverse=True)
     complete_data = gbm_model.predict(train_data, test_data)
-    gbm_model.validation(complete_data)
-    GBM_FILE_PATH = 'data_predictor/TEST_fitted_gbm'
+    gbm_eval_metrics = gbm_model.validation(complete_data, True)
+    print(gbm_eval_metrics['accuracy_score'])
+    GBM_FILE_PATH = 'data_predictor/stored_models/TEST_fitted_gbm'
     gbm_model.save_model(GBM_FILE_PATH)
     gbm_model_2 = GBM(GradientBoostingClassifier(), gbm_parameters_dict)
     gbm_model_2.load_model(GBM_FILE_PATH)

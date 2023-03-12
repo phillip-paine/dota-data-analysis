@@ -1,10 +1,9 @@
 import polars as pl
-import numpy as np
 from run_constants.run_constants import TRAINING_MODEL_FILEPATH
-from sklearn.metrics.cluster import contingency_matrix
 from sklearn import metrics
 from typing import Dict, Any
 import matplotlib.pyplot as plt
+import time
 
 
 def create_model_features() -> pl.DataFrame:
@@ -58,27 +57,38 @@ def feature_processing(df: pl.DataFrame) -> pl.DataFrame:
 def compare_model_evaluations(y: pl.Series, yhat_dict: Dict[str, Any]):
     coef_dict = {}
     fig = plt.figure()
+    model_list = []
     for model_str, yhat in yhat_dict.items():
-        coef_dict[model_str] = model_evaluation(y, yhat)
-        # AUC with all models:
-        fpr, tpr, thresholds = metrics.roc_curve(y, yhat, pos_label=2)
-        fig = add_roc_curve_to_figure(fig, fpr, tpr)
+        model_list.append(model_str)
+        if not coef_dict:
+            coef_dict[model_str] = model_evaluation(y, yhat, True)
+            fig = coef_dict[model_str]['roc_plot']
+        else:
+            coef_dict[model_str] = model_evaluation(y, yhat)
+            # AUC with all models:
+            fpr, tpr, thresholds = metrics.roc_curve(y, yhat, pos_label=2)
+            fig = add_roc_curve_to_figure(fig, fpr, tpr)
+    model_list_string = '_'.join(model_list)
+    fig.savefig(f'data_storage/output/roc_plot_{model_list_string}_{time.strftime("%Y%m%d-%H%M%S")}.png',
+                bbox_inches='tight')
     return coef_dict
 
 
-def model_evaluation(y: pl.Series, yhat: pl.Series):
+def model_evaluation(y: pl.Series, yhat: pl.Series, model_name: str, create_roc: bool = False):
     eval_metrics_dict = {}
     # calculate the YPC (or MCC):
     ypc = metrics.matthews_corrcoef(y, yhat)  # yule's phi coefficient (also called Matthews correlation coef.)
     eval_metrics_dict['YulePhiCoef'] = ypc
-    # area under ROC curve:
-    fpr, tpr, _ = metrics.roc_curve(y, yhat, pos_label=2)
-    roc_plot = plot_roc_figure(fpr, tpr)
-    eval_metrics_dict['roc_plot'] = roc_plot
+    if create_roc:
+        # area under ROC curve:
+        fpr, tpr, _ = metrics.roc_curve(y, yhat, pos_label=2)
+        roc_plot = plot_roc_figure(fpr, tpr)
+        roc_plot.savefig(f'data_storage/output/roc_plot_{model_name}_{time.strftime("%Y%m%d-%H%M%S")}.png',
+                         bbox_inches='tight')
     # accuracy score - metric is okay here because relatively equal class counts
     acc_score = metrics.accuracy_score(y, yhat)
     eval_metrics_dict['accuracy_score'] = acc_score
-    return ypc, roc_plot
+    return eval_metrics_dict
 
 
 def add_roc_curve_to_figure(fig_, fpr, tpr):

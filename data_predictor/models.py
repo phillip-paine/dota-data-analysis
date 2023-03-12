@@ -29,7 +29,7 @@ class Model(metaclass=Method):
         pass
 
     @abstractmethod
-    def validation(self, validation_df: pl.DataFrame):
+    def validation(self, validation_df: pl.DataFrame, plot: bool):
         pass
 
     @abstractmethod
