@@ -1,37 +1,35 @@
+"""Gradient Boosted Model for radiant win classifier"""
 import polars as pl
 import numpy as np
-from sklearn.svm import SVC  # support vector machine classifier
+from sklearn.ensemble import GradientBoostingClassifier
 from data_predictor.utils import model_evaluation, feature_processing
 from data_predictor.models import Model
 import pickle
 from sklearn.model_selection import train_test_split
 
 
-# implement support vector machine model through the abstract model class
-class SupportVectorMachine(Model):
-    display_name = "SupportVectorMachine"
+class GBM(Model):
+    display_name = "GBM"
 
-    def __init__(self, model, model_params):  # can implement here to overwrite the abstract class definition
-        super().__init__(model_params)  # super creates a temp object of parent class Models -
-        # for example if there were methods there we would not need to redefine them here, or
-        # variables that get defined in the constructor - we will likely need this to save time later
-        self.svc = model
+    def __init__(self, model, model_params):
+        super().__init__(model_params)
+        self.gbm = model
 
     @classmethod
     def fit(cls, train_data, model_params):
-        svc = SVC(**model_params)
+        gbm = GradientBoostingClassifier(**model_params)
         y = np.ravel(train_data.select(pl.col("radiant_win_flag")).to_numpy())
         X = train_data.drop(["radiant_win_flag", "radiant_win"]).to_numpy()
-        svc.fit(X, y)  # set to True for predict_proba output
-        return cls(model=svc, model_params=model_params)
+        gbm.fit(X, y)
+        return cls(model=gbm, model_params=model_params)
 
-    def predict(self, fitted_df: pl.DataFrame, predict_df: pl.DataFrame):
+    def predict(self, fitted_df: pl.DataFrame, predict_df: pl.DataFrame) -> pl.DataFrame:
         fitted_df = fitted_df.with_columns(pl.lit(1).alias("history"))
         predict_df = predict_df.with_columns(pl.lit(0).alias("history"))
         complete_df = pl.concat([fitted_df, predict_df])
         x_pred = complete_df.drop(["radiant_win", "radiant_win_flag", "history"]).to_numpy()
-        class_prediction = self.svc.predict(x_pred)
-        probability_prediction = np.array([p[0] for p in self.svc.predict_proba(x_pred)])
+        class_prediction = self.gbm.predict(x_pred)
+        probability_prediction = np.array([p[0] for p in self.gbm.predict_proba(x_pred)])
         complete_df = complete_df.with_columns(pl.Series(name="yhat_gbm", values=class_prediction))  # pred class
         complete_df = complete_df.with_columns(pl.Series(name="yhat_gbm_probs", values=probability_prediction))  # pred class probabilities
         return complete_df
@@ -43,15 +41,15 @@ class SupportVectorMachine(Model):
         return model_eval_dict
 
     def fetch_model(self):
-        return self.svc
+        return self.gbm
 
     def save_model(self, file):
         with open(file, 'wb') as pickle_file:
-            pickle.dump(self.svc, pickle_file)
+            pickle.dump(self.gbm, pickle_file)
 
     def load_model(self, file):
         with open(file, 'rb') as pickle_file:
-            self.svc = pickle.load(pickle_file)
+            self.gbm = pickle.load(pickle_file)
 
 
 if __name__ == '__main__':
@@ -63,15 +61,15 @@ if __name__ == '__main__':
     data = feature_processing(data)
     # data = data.lazy().drop_nulls().collect()
     train_data, test_data = train_test_split(data, test_size=0.2)
-    svc_parameters_dict = {'probability': True}
-    # set probability=True in the constructor to use predict_proba function later
-    svc_model = SupportVectorMachine(SVC(), svc_parameters_dict)
-    svc_model = svc_model.fit(train_data, svc_parameters_dict)
+    gbm_parameters_dict = {}
+    gbm_model = GBM(GradientBoostingClassifier(), gbm_parameters_dict)
+    gbm_model = gbm_model.fit(train_data, gbm_parameters_dict)
     model_columns = train_data.drop(["radiant_win", "radiant_win_flag"]).columns
-    complete_data = svc_model.predict(train_data, test_data)
-    svc_eval_metrics = svc_model.validation(complete_data)
-    print(svc_eval_metrics['accuracy_score'])
-    svc_FILE_PATH = 'data_predictor/stored_models/TEST_fitted_svc'
-    svc_model.save_model(svc_FILE_PATH)
-    svc_model_2 = SupportVectorMachine(SVC(), svc_parameters_dict)
-    svc_model_2.load_model(svc_FILE_PATH)
+    df_feat_summary = pl.DataFrame({"names": model_columns, "imp": gbm_model.gbm.feature_importances_}).sort("imp", reverse=True)
+    complete_data = gbm_model.predict(train_data, test_data)
+    gbm_eval_metrics = gbm_model.validation(complete_data, True)
+    print(gbm_eval_metrics['accuracy_score'])
+    GBM_FILE_PATH = 'data_predictor/stored_models/TEST_fitted_gbm'
+    gbm_model.save_model(GBM_FILE_PATH)
+    gbm_model_2 = GBM(GradientBoostingClassifier(), gbm_parameters_dict)
+    gbm_model_2.load_model(GBM_FILE_PATH)
