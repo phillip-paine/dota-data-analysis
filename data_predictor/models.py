@@ -25,7 +25,11 @@ class Model(metaclass=Method):
         self.model_params = model_params
 
     @abstractmethod
-    def predict(self, history_df: pl.DataFrame, future_df: pl.DataFrame):
+    def predict_with_fitted(self, history_df: pl.DataFrame, future_df: pl.DataFrame):
+        pass
+
+    @abstractmethod
+    def predict(self, df: pl.DataFrame):
         pass
 
     @abstractmethod

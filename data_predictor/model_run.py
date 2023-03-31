@@ -6,8 +6,8 @@ from data_predictor.gbm import GBM
 from run_constants.run_constants import MODELS_IN_USE, RUN_ARGUMENTS
 from data_predictor.dataframe_holder import DataFrameHolder
 from sklearn.svm import SVC
-from lightgbm import LGBMClassifier
-
+# from lightgbm import LGBMClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 
 def run_models(models: List[str], model_arguments: Dict[str, Dict[Any, Any]], run_arguments: Dict[str, Any]) -> None:
     # create dataframe object for training and testing:
@@ -23,7 +23,7 @@ def run_models(models: List[str], model_arguments: Dict[str, Dict[Any, Any]], ru
         if model == "svm":
             model_inst = SupportVectorMachine(SVC(), data_holder, model_arguments['svm'])
         elif model == "gbm":
-            model_inst = GBM(LGBMClassifier(), data_holder, model_arguments['gbm'])
+            model_inst = GBM(GradientBoostingClassifier(), data_holder, model_arguments['gbm'])
 
         if run_arguments['validation_stage']:
             # train-test split for validation:
@@ -50,4 +50,6 @@ if __name__ == '__main__':
     svm_arguments = {}
     gbm_arguments = {}
     model_args = svm_arguments | gbm_arguments
+    gbm_filename = "prod_fitted_gbm"
+    svc_filename = "prod_fitted_svc"
     run_models(model_list, model_args, RUN_ARGUMENTS)
