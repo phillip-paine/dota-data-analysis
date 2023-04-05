@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 import time
 
 
-def create_model_features(df: pl.DataFrame = None) -> pl.DataFrame:
+def create_model_features(df: pl.DataFrame = None, prediction: bool = False) -> pl.DataFrame:
     """main function to create model features from match data + hero feature"""
-    if not df:
+    if df is None:
         # read data only useful columns
         df = pl.scan_parquet('data_storage/public_match_data_formatted.parquet').select([
             pl.col("avg_mmr"), pl.col("radiant_win"), pl.col("lobby_type"), pl.col("game_mode"),
@@ -26,8 +26,9 @@ def create_model_features(df: pl.DataFrame = None) -> pl.DataFrame:
     df = count_attribute_teams('primary_attr_agi', df, df_hero_dict)
     df = count_attribute_teams('primary_attr_str', df, df_hero_dict)
     df = count_attribute_teams('primary_attr_int', df, df_hero_dict)
-    # 2. radiant win flag: need integer column for many models:
-    df = df.with_column(pl.col("radiant_win").cast(pl.Int8).alias("radiant_win_flag"))  # checked.
+    if not prediction:
+        # 2. radiant win flag: need integer column for many models:
+        df = df.with_column(pl.col("radiant_win").cast(pl.Int8).alias("radiant_win_flag"))  # checked.
     return df
 
 
