@@ -3,7 +3,6 @@ This first attempt should allow us to enter 5v5 heroes and return a result predi
 """
 import polars as pl
 import numpy as np
-from typing import Dict, List, Union
 from data_formatter.utils import hero_names_from_string_ints, hero_names_from_strings
 from data_predictor.utils import create_model_features
 from dataclasses import dataclass
@@ -104,11 +103,12 @@ class MatchPrediction:
         x_pred = df.drop(["radiant_team", "dire_team", "radiant_heroes", "dire_heroes", "radiant_hero_1",
                           "radiant_hero_2", "radiant_hero_3", "radiant_hero_4", "radiant_hero_5", "dire_hero_1",
                           "dire_hero_2", "dire_hero_3", "dire_hero_4", "dire_hero_5"]).to_numpy()
-        probability_prediction = np.array([p[0] for p in self.loaded_model.gbm.predict_proba(x_pred)])
+        probability_prediction = np.array([p[0] for p in self.loaded_model.__dict__[self.model_reference].predict_proba(x_pred)])
         winning_team = "radiant" if probability_prediction > 0.5 else "dire"
-        winning_pct = probability_prediction[0] if winning_team == "radiant" else \
-            (100 - probability_prediction[0])
-        dict_winners = {'winning_side': winning_team, 'win_pct': winning_pct}
+        winning_pct = 100*probability_prediction[0] if winning_team == "radiant" else \
+            (100 - 100*probability_prediction[0])
+        dict_winners = {'radiant_win_pct': int(100*probability_prediction[0]), 'winning_side': winning_team,
+                        'win_pct': int(winning_pct)}
         return dict_winners
 
     # return the winning chance for radiant
@@ -127,5 +127,3 @@ if __name__ == '__main__':
     new_match_prediction = MatchPrediction(new_match, model_string)
     new_match_prediction.create_feature_frame()
     output = new_match_prediction.predict()
-    print(output)
-    a = 1
