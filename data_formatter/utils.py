@@ -42,22 +42,8 @@ def create_public_matches_datafame(json_records: dict) -> pd.DataFrame:
     hero_dict = get_hero_dict()
     # write json to dataframe:
     df = pd.json_normalize(json_records)
-    # create radiant hero columns:
-    # can remove this commented code if the hero_name_from_id works fine
-    # df['radiant_heroes'] = df['radiant_team'].apply(lambda x: x.split(','))
-    # df[['radiant1', 'radiant2', 'radiant3', 'radiant4', 'radiant5']] = df['radiant_heroes'].to_list()
-    # df[['radiant1', 'radiant2', 'radiant3', 'radiant4', 'radiant5']] = \
-    #     df[['radiant1', 'radiant2', 'radiant3', 'radiant4', 'radiant5']].astype(int)
-    # for i in range(1, 6):
-    #     df['radiant_hero_' + str(i)] = df['radiant' + str(i)].apply(lambda x: hero_dict[x])
     # # repeat for dire heroes:
     df = hero_names_from_id(df, hero_dict, "radiant")
-    # df['dire_heroes'] = df['dire_team'].apply(lambda x: x.split(','))
-    # df[['dire1', 'dire2', 'dire3', 'dire4', 'dire5']] = df['dire_heroes'].to_list()
-    # df[['dire1', 'dire2', 'dire3', 'dire4', 'dire5']] = \
-    #     df[['dire1', 'dire2', 'dire3', 'dire4', 'dire5']].astype(int)
-    # for i in range(1, 6):
-    #     df['dire_hero_' + str(i)] = df['dire' + str(i)].apply(lambda x: hero_dict[x])
     df = hero_names_from_id(df, hero_dict, "dire")
     return df
 
