@@ -19,6 +19,7 @@ class TaskModel(BaseModel):
             }
         }
 
+
 class UpdateTaskModel(BaseModel):
     name: Optional[str]
     completed: Optional[bool]
