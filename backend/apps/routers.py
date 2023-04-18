@@ -11,7 +11,7 @@ router = APIRouter()
 
 # response_description is used to populate documentation on the api
 @router.post("/", response_description="Add new task")
-async def create_task(request: Request, task: UpdateTaskModel = Body(...)):
+async def create_task(request: Request, task: TaskModel = Body(...)):
     task = jsonable_encoder(task)  # python dict to json seralised format
     new_task = await request.app.mongodb[''].insert_one(task)  # await allows rest of code to be executed
     # whilst waiting for this connection to db to complete (not fastapi specific command)
