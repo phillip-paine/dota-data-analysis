@@ -1,7 +1,7 @@
 import uvicorn  # this is an asychronous gateway server interface - hence use it with fastapi
 from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
-from apps.routers import router as app_router
+from backend.apps.app.routers import router as app_router
 from config import settings
 
 app = FastAPI()

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Body, HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from .models import TaskModel, UpdateTaskModel
+from backend.apps.app.models import TaskModel, UpdateTaskModel
 
 router = APIRouter()
 
