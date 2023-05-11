@@ -1,11 +1,11 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: path.resolve(__dirname, './public/index.js'),
+  entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/'
   },
   module: {
     rules: [
@@ -13,38 +13,22 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
-        },
-    },
+          loader: 'babel-loader'
+        }
+      },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
-    },
+        use: ['style-loader', 'css-loader']
+      },
       {
-      test: /\.(js|jsx)$/,
-            exclude: /(node_modules|bower_components)/,
-            use: {
-              loader: 'babel-loader',
-              options: {
-                presets: ['@babel/preset-env', '@babel/preset-react']
-              }
-        },
-    },
-    ],
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'public/index.html'),
-    }),
-  ],
-  resolve: {
-    alias: {
-      'react': path.resolve(__dirname, 'node_modules', 'react'),
-    },
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
+      },
+    ]
   },
   devServer: {
-    contentBase: path.join(__dirname, 'dist'),
-    compress: true,
-    port: 9000,
-  },
+    static: path.resolve(__dirname, 'dist'),
+    port: 8080,
+    open: true
+  }
 };
