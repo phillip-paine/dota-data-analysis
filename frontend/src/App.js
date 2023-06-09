@@ -1,5 +1,4 @@
 import './styles/App.css';
-import './styles/DropdownSelect.css';
 import { useState } from 'react';
 import DropdownSelect from './components/DropdownSelect';
 
@@ -18,9 +17,26 @@ const App = () => {
         <div className="App">
             <h1>Welcome</h1>
             <div className="DropdownRow">
-                <DropdownSelect options={options} placeholder="Select a hero" />
-                <DropdownSelect options={options} placeholder="Select second hero" />
+                <DropdownSelect options={options} placeholder="Radiant hero 1" />
+                <DropdownSelect options={options} placeholder="Dire hero 1" />
             </div>
+            <div className="DropdownRow">
+                <DropdownSelect options={options} placeholder="Radiant hero 2" />
+                <DropdownSelect options={options} placeholder="Dire hero 2" />
+            </div>
+            <div className="DropdownRow">
+                <DropdownSelect options={options} placeholder="Radiant hero 3" />
+                <DropdownSelect options={options} placeholder="Dire hero 3" />
+            </div>
+            <div className="DropdownRow">
+                <DropdownSelect options={options} placeholder="Radiant hero 4" />
+                <DropdownSelect options={options} placeholder="Dire hero 4" />
+            </div>
+            <div className="DropdownRow">
+                <DropdownSelect options={options} placeholder="Radiant hero 5" />
+                <DropdownSelect options={options} placeholder="Dire hero 5" />
+            </div>
+
         </div>
     );
 }
